@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net" modified="2026-06-21T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="despacho-diagrama-clases" name="Diagrama Despacho">
+    <mxGraphModel dx="1186" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Diagrama de Clases - Microservicio Despacho" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="315" y="45" width="540" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="Despacho" value="&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;b&gt;Despacho&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border-top:1px solid #6c8ebf;padding:8px 10px;&quot; align=&quot;left&quot;&gt;- idDespacho: Long&lt;br&gt;- idVenta: Long&lt;br&gt;- idCliente: Long&lt;br&gt;- idSucursal: Long&lt;br&gt;- direccionEntrega: String&lt;br&gt;- comuna: String&lt;br&gt;- ciudad: String&lt;br&gt;- estado: String&lt;br&gt;- costoDespacho: Integer&lt;br&gt;- fechaEstimada: LocalDate&lt;br&gt;- fechaEntrega: LocalDate&lt;br&gt;- transportista: Transportista&lt;br&gt;- detalles: List&amp;lt;DetalleDespacho&amp;gt;&lt;br&gt;- seguimientos: List&amp;lt;SeguimientoDespacho&amp;gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border-top:1px solid #6c8ebf;padding:8px 10px;&quot; align=&quot;left&quot;&gt;+ crearDespacho(): void&lt;br&gt;+ actualizarEstado(): void&lt;br&gt;+ asignarTransportista(): void&lt;br&gt;+ confirmarEntrega(): void&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=top;spacing=0;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="425" y="135" width="320" height="365" as="geometry"/>
+        </mxCell>
+        <mxCell id="DetalleDespacho" value="&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;b&gt;DetalleDespacho&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border-top:1px solid #82b366;padding:8px 10px;&quot; align=&quot;left&quot;&gt;- idDetalle: Long&lt;br&gt;- idProducto: Long&lt;br&gt;- nombreProducto: String&lt;br&gt;- cantidad: Integer&lt;br&gt;- estado: String&lt;br&gt;- despacho: Despacho&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border-top:1px solid #82b366;padding:8px 10px;&quot; align=&quot;left&quot;&gt;+ agregarDetalle(): void&lt;br&gt;+ modificarCantidad(): void&lt;br&gt;+ quitarDetalle(): void&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=top;spacing=0;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="85" y="180" width="285" height="225" as="geometry"/>
+        </mxCell>
+        <mxCell id="Transportista" value="&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;b&gt;Transportista&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border-top:1px solid #d6b656;padding:8px 10px;&quot; align=&quot;left&quot;&gt;- idTransportista: Long&lt;br&gt;- nombre: String&lt;br&gt;- telefono: String&lt;br&gt;- empresa: String&lt;br&gt;- estado: String&lt;br&gt;- despachos: List&amp;lt;Despacho&amp;gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border-top:1px solid #d6b656;padding:8px 10px;&quot; align=&quot;left&quot;&gt;+ registrarTransportista(): void&lt;br&gt;+ actualizarDatos(): void&lt;br&gt;+ desactivar(): void&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=top;spacing=0;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="800" y="185" width="285" height="225" as="geometry"/>
+        </mxCell>
+        <mxCell id="SeguimientoDespacho" value="&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;b&gt;SeguimientoDespacho&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border-top:1px solid #b85450;padding:8px 10px;&quot; align=&quot;left&quot;&gt;- idSeguimiento: Long&lt;br&gt;- fechaEvento: LocalDateTime&lt;br&gt;- estado: String&lt;br&gt;- ubicacion: String&lt;br&gt;- observacion: String&lt;br&gt;- despacho: Despacho&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border-top:1px solid #b85450;padding:8px 10px;&quot; align=&quot;left&quot;&gt;+ registrarEvento(): void&lt;br&gt;+ consultarEstado(): void&lt;br&gt;+ agregarObservacion(): void&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;verticalAlign=top;spacing=0;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="440" y="580" width="300" height="225" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeDespachoDetalle" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=2;endFill=0;" edge="1" parent="1" source="Despacho" target="DetalleDespacho">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="multDespachoDetalleDespacho" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="385" y="270" width="30" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="multDespachoDetalleDetalle" value="1..*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="370" y="300" width="45" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeDespachoTransportista" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=2;endFill=0;" edge="1" parent="1" source="Despacho" target="Transportista">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="multDespachoTransportistaDespacho" value="0..*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="750" y="275" width="45" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="multDespachoTransportistaTransportista" value="0..1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="305" width="45" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeDespachoSeguimiento" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=2;endFill=0;" edge="1" parent="1" source="Despacho" target="SeguimientoDespacho">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="multDespachoSeguimientoDespacho" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="515" width="30" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="multDespachoSeguimientoSeguimiento" value="0..*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="590" y="545" width="45" height="20" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
