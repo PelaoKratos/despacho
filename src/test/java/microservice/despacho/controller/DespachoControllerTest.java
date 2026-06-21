@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -51,12 +51,12 @@ class DespachoControllerTest {
 	@Test
 	void busquedasDeleganEnServicio() {
 		List<Despacho> despachos = List.of(crearDespacho());
-		when(despachoService.buscarPorVenta(10L)).thenReturn(despachos);
+		when(despachoService.buscarPorPedido(10L)).thenReturn(despachos);
 		when(despachoService.buscarPorCliente(20L)).thenReturn(despachos);
 		when(despachoService.buscarPorSucursal(30L)).thenReturn(despachos);
 		when(despachoService.buscarPorEstado("PENDIENTE")).thenReturn(despachos);
 
-		assertThat(despachoController.buscarPorVenta(10L)).isEqualTo(despachos);
+		assertThat(despachoController.buscarPorPedido(10L)).isEqualTo(despachos);
 		assertThat(despachoController.buscarPorCliente(20L)).isEqualTo(despachos);
 		assertThat(despachoController.buscarPorSucursal(30L)).isEqualTo(despachos);
 		assertThat(despachoController.buscarPorEstado("PENDIENTE")).isEqualTo(despachos);
@@ -76,13 +76,13 @@ class DespachoControllerTest {
 	void accionesParcialesDeleganEnServicio() {
 		Despacho despacho = crearDespacho();
 		when(despachoService.cambiarEstado(1L, "ENTREGADO")).thenReturn(despacho);
-		when(despachoService.asignarTransportista(1L, "Starken")).thenReturn(despacho);
+		when(despachoService.asignarRuta(1L)).thenReturn(despacho);
 		when(despachoService.marcarEnTransito(1L)).thenReturn(despacho);
 		when(despachoService.confirmarEntrega(1L)).thenReturn(despacho);
 		when(despachoService.cancelar(1L)).thenReturn(despacho);
 
 		assertThat(despachoController.cambiarEstado(1L, Map.of("estado", "ENTREGADO"))).isEqualTo(despacho);
-		assertThat(despachoController.asignarTransportista(1L, Map.of("transportista", "Starken"))).isEqualTo(despacho);
+		assertThat(despachoController.asignarRuta(1L)).isEqualTo(despacho);
 		assertThat(despachoController.marcarEnTransito(1L)).isEqualTo(despacho);
 		assertThat(despachoController.confirmarEntrega(1L)).isEqualTo(despacho);
 		assertThat(despachoController.cancelar(1L)).isEqualTo(despacho);
@@ -103,12 +103,12 @@ class DespachoControllerTest {
 				20L,
 				30L,
 				"Av. Siempre Viva 123",
-				"Santiago",
-				"Santiago",
+				LocalDateTime.of(2026, 7, 1, 9, 0),
+				LocalDateTime.of(2026, 7, 2, 18, 0),
+				null,
 				"PENDIENTE",
-				"Blue Express",
-				2990,
-				LocalDate.of(2026, 7, 1),
-				null);
+				List.of(),
+				List.of(),
+				List.of());
 	}
 }

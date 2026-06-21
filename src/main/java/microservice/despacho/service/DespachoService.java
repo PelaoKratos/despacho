@@ -1,6 +1,6 @@
 package microservice.despacho.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import microservice.despacho.repository.DespachoRepository;
 public class DespachoService {
 
 	private static final String ESTADO_PENDIENTE = "PENDIENTE";
-	private static final String ESTADO_PREPARACION = "EN_PREPARACION";
+	private static final String ESTADO_RUTA_ASIGNADA = "RUTA_ASIGNADA";
 	private static final String ESTADO_EN_TRANSITO = "EN_TRANSITO";
 	private static final String ESTADO_ENTREGADO = "ENTREGADO";
 	private static final String ESTADO_CANCELADO = "CANCELADO";
@@ -32,8 +32,8 @@ public class DespachoService {
 		return buscarDespacho(id);
 	}
 
-	public List<Despacho> buscarPorVenta(Long idVenta) {
-		return despachoRepository.findByIdVenta(idVenta);
+	public List<Despacho> buscarPorPedido(Long idPedido) {
+		return despachoRepository.findByIdPedido(idPedido);
 	}
 
 	public List<Despacho> buscarPorCliente(Long idCliente) {
@@ -54,23 +54,28 @@ public class DespachoService {
 		} else {
 			despacho.setEstado(normalizarEstado(despacho.getEstado()));
 		}
+		if (despacho.getFechaDespacho() == null) {
+			despacho.setFechaDespacho(LocalDateTime.now());
+		}
+		vincularRelaciones(despacho);
 		validarFechas(despacho);
 		return despachoRepository.save(despacho);
 	}
 
 	public Despacho actualizar(Long id, Despacho datosDespacho) {
 		Despacho despacho = buscarDespacho(id);
-		despacho.setIdVenta(datosDespacho.getIdVenta());
+		despacho.setIdPedido(datosDespacho.getIdPedido());
 		despacho.setIdCliente(datosDespacho.getIdCliente());
 		despacho.setIdSucursal(datosDespacho.getIdSucursal());
 		despacho.setDireccionEntrega(datosDespacho.getDireccionEntrega());
-		despacho.setComuna(datosDespacho.getComuna());
-		despacho.setCiudad(datosDespacho.getCiudad());
-		despacho.setEstado(normalizarEstado(datosDespacho.getEstado()));
-		despacho.setTransportista(datosDespacho.getTransportista());
-		despacho.setCostoDespacho(datosDespacho.getCostoDespacho());
-		despacho.setFechaEstimada(datosDespacho.getFechaEstimada());
+		despacho.setFechaDespacho(datosDespacho.getFechaDespacho());
+		despacho.setFechaEstimadaEntrega(datosDespacho.getFechaEstimadaEntrega());
 		despacho.setFechaEntrega(datosDespacho.getFechaEntrega());
+		despacho.setEstado(normalizarEstado(datosDespacho.getEstado()));
+		despacho.setDetalles(datosDespacho.getDetalles());
+		despacho.setParadas(datosDespacho.getParadas());
+		despacho.setSeguimientos(datosDespacho.getSeguimientos());
+		vincularRelaciones(despacho);
 		validarFechas(despacho);
 		return despachoRepository.save(despacho);
 	}
@@ -78,38 +83,28 @@ public class DespachoService {
 	public Despacho cambiarEstado(Long id, String estado) {
 		Despacho despacho = buscarDespacho(id);
 		String estadoNormalizado = normalizarEstado(estado);
-		despacho.setEstado(estadoNormalizado);
+		despacho.actualizarEstado(estadoNormalizado);
 		if (ESTADO_ENTREGADO.equals(estadoNormalizado) && despacho.getFechaEntrega() == null) {
-			despacho.setFechaEntrega(LocalDate.now());
+			despacho.setFechaEntrega(LocalDateTime.now());
 		}
 		return despachoRepository.save(despacho);
 	}
 
-	public Despacho asignarTransportista(Long id, String transportista) {
-		if (transportista == null || transportista.isBlank()) {
-			throw new IllegalArgumentException("El transportista no puede estar vacio");
-		}
+	public Despacho asignarRuta(Long id) {
 		Despacho despacho = buscarDespacho(id);
-		despacho.setTransportista(transportista.trim());
-		if (ESTADO_PENDIENTE.equals(despacho.getEstado())) {
-			despacho.setEstado(ESTADO_PREPARACION);
-		}
+		despacho.actualizarEstado(ESTADO_RUTA_ASIGNADA);
 		return despachoRepository.save(despacho);
 	}
 
 	public Despacho marcarEnTransito(Long id) {
 		Despacho despacho = buscarDespacho(id);
-		if (despacho.getTransportista() == null || despacho.getTransportista().isBlank()) {
-			throw new IllegalArgumentException("No se puede iniciar el despacho sin transportista");
-		}
-		despacho.setEstado(ESTADO_EN_TRANSITO);
+		despacho.actualizarEstado(ESTADO_EN_TRANSITO);
 		return despachoRepository.save(despacho);
 	}
 
 	public Despacho confirmarEntrega(Long id) {
 		Despacho despacho = buscarDespacho(id);
-		despacho.setEstado(ESTADO_ENTREGADO);
-		despacho.setFechaEntrega(LocalDate.now());
+		despacho.confirmarEntrega();
 		return despachoRepository.save(despacho);
 	}
 
@@ -118,7 +113,7 @@ public class DespachoService {
 		if (ESTADO_ENTREGADO.equals(despacho.getEstado())) {
 			throw new IllegalArgumentException("No se puede cancelar un despacho entregado");
 		}
-		despacho.setEstado(ESTADO_CANCELADO);
+		despacho.actualizarEstado(ESTADO_CANCELADO);
 		return despachoRepository.save(despacho);
 	}
 
@@ -137,7 +132,7 @@ public class DespachoService {
 			throw new IllegalArgumentException("El estado no puede estar vacio");
 		}
 		String estadoNormalizado = estado.trim().toUpperCase();
-		if (!List.of(ESTADO_PENDIENTE, ESTADO_PREPARACION, ESTADO_EN_TRANSITO, ESTADO_ENTREGADO, ESTADO_CANCELADO)
+		if (!List.of(ESTADO_PENDIENTE, ESTADO_RUTA_ASIGNADA, ESTADO_EN_TRANSITO, ESTADO_ENTREGADO, ESTADO_CANCELADO)
 				.contains(estadoNormalizado)) {
 			throw new IllegalArgumentException("Estado de despacho no valido: " + estado);
 		}
@@ -145,9 +140,21 @@ public class DespachoService {
 	}
 
 	private void validarFechas(Despacho despacho) {
-		if (despacho.getFechaEntrega() != null && despacho.getFechaEstimada() != null
-				&& despacho.getFechaEntrega().isBefore(despacho.getFechaEstimada())) {
+		if (despacho.getFechaEntrega() != null && despacho.getFechaEstimadaEntrega() != null
+				&& despacho.getFechaEntrega().isBefore(despacho.getFechaEstimadaEntrega())) {
 			throw new IllegalArgumentException("La fecha de entrega no puede ser anterior a la fecha estimada");
+		}
+	}
+
+	private void vincularRelaciones(Despacho despacho) {
+		if (despacho.getDetalles() != null) {
+			despacho.getDetalles().forEach(detalle -> detalle.setDespacho(despacho));
+		}
+		if (despacho.getParadas() != null) {
+			despacho.getParadas().forEach(parada -> parada.setDespacho(despacho));
+		}
+		if (despacho.getSeguimientos() != null) {
+			despacho.getSeguimientos().forEach(seguimiento -> seguimiento.setDespacho(despacho));
 		}
 	}
 }

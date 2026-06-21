@@ -8,7 +8,7 @@ import microservice.despacho.model.Despacho;
 
 public interface DespachoRepository extends JpaRepository<Despacho, Long> {
 
-	List<Despacho> findByIdVenta(Long idVenta);
+	List<Despacho> findByIdPedido(Long idPedido);
 
 	List<Despacho> findByIdCliente(Long idCliente);
 

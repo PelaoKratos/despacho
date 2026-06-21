@@ -1,19 +1,19 @@
 # Microservicio Despacho
 
-Gestiona los despachos asociados a ventas, clientes y sucursales.
+Gestiona los despachos asociados a pedidos, clientes, sucursales, rutas, paradas, seguimientos y transportistas.
 
 ## Endpoints principales
 
 - `GET /api/despachos`
 - `GET /api/despachos/{id}`
-- `GET /api/despachos/venta/{idVenta}`
+- `GET /api/despachos/pedido/{idPedido}`
 - `GET /api/despachos/cliente/{idCliente}`
 - `GET /api/despachos/sucursal/{idSucursal}`
 - `GET /api/despachos/estado/{estado}`
 - `POST /api/despachos`
 - `PUT /api/despachos/{id}`
 - `PATCH /api/despachos/{id}/estado`
-- `PATCH /api/despachos/{id}/transportista`
+- `PATCH /api/despachos/{id}/ruta`
 - `PATCH /api/despachos/{id}/en-transito`
 - `PATCH /api/despachos/{id}/entrega`
 - `PATCH /api/despachos/{id}/cancelacion`

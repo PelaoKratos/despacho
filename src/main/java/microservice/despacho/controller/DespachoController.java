@@ -38,9 +38,9 @@ public class DespachoController {
 		return despachoService.obtenerPorId(id);
 	}
 
-	@GetMapping("/venta/{idVenta}")
-	public List<Despacho> buscarPorVenta(@PathVariable Long idVenta) {
-		return despachoService.buscarPorVenta(idVenta);
+	@GetMapping("/pedido/{idPedido}")
+	public List<Despacho> buscarPorPedido(@PathVariable Long idPedido) {
+		return despachoService.buscarPorPedido(idPedido);
 	}
 
 	@GetMapping("/cliente/{idCliente}")
@@ -73,9 +73,9 @@ public class DespachoController {
 		return despachoService.cambiarEstado(id, request.get("estado"));
 	}
 
-	@PatchMapping("/{id}/transportista")
-	public Despacho asignarTransportista(@PathVariable Long id, @RequestBody Map<String, String> request) {
-		return despachoService.asignarTransportista(id, request.get("transportista"));
+	@PatchMapping("/{id}/ruta")
+	public Despacho asignarRuta(@PathVariable Long id) {
+		return despachoService.asignarRuta(id);
 	}
 
 	@PatchMapping("/{id}/en-transito")
