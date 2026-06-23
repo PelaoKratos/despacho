@@ -16,7 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import microservice.despacho.dto.DatosRelacionadosDespacho;
 import microservice.despacho.model.Despacho;
+import microservice.despacho.service.DespachoIntegracionService;
 import microservice.despacho.service.DespachoService;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,11 +27,14 @@ class DespachoControllerTest {
 	@Mock
 	private DespachoService despachoService;
 
+	@Mock
+	private DespachoIntegracionService despachoIntegracionService;
+
 	private DespachoController despachoController;
 
 	@BeforeEach
 	void setUp() {
-		despachoController = new DespachoController(despachoService);
+		despachoController = new DespachoController(despachoService, despachoIntegracionService);
 	}
 
 	@Test
@@ -46,6 +51,19 @@ class DespachoControllerTest {
 		when(despachoService.obtenerPorId(1L)).thenReturn(despacho);
 
 		assertThat(despachoController.obtenerPorId(1L)).isEqualTo(despacho);
+	}
+
+	@Test
+	void obtenerDatosRelacionadosRetornaDatosExternos() {
+		Despacho despacho = crearDespacho();
+		DatosRelacionadosDespacho datos = new DatosRelacionadosDespacho(
+				despacho,
+				Map.of("idPedido", 10),
+				Map.of("idCliente", 20),
+				Map.of("idSucursal", 30));
+		when(despachoIntegracionService.obtenerDatosRelacionados(1L)).thenReturn(datos);
+
+		assertThat(despachoController.obtenerDatosRelacionados(1L)).isEqualTo(datos);
 	}
 
 	@Test
@@ -67,9 +85,11 @@ class DespachoControllerTest {
 		Despacho despacho = crearDespacho();
 		when(despachoService.crear(despacho)).thenReturn(despacho);
 		when(despachoService.actualizar(1L, despacho)).thenReturn(despacho);
+		when(despachoService.cargarDatosDemo()).thenReturn(List.of(despacho));
 
 		assertThat(despachoController.crear(despacho)).isEqualTo(despacho);
 		assertThat(despachoController.actualizar(1L, despacho)).isEqualTo(despacho);
+		assertThat(despachoController.cargarDatosDemo()).containsExactly(despacho);
 	}
 
 	@Test

@@ -112,7 +112,6 @@
 				<configuration>
 					<excludes>
 						<exclude>microservice/despacho/DespachoApplication.class</exclude>
-						<exclude>microservice/despacho/model/**</exclude>
 						<exclude>microservice/despacho/repository/**</exclude>
 					</excludes>
 				</configuration>

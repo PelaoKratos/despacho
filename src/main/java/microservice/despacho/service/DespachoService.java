@@ -1,12 +1,16 @@
 package microservice.despacho.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import microservice.despacho.exception.ResourceNotFoundException;
 import microservice.despacho.model.Despacho;
+import microservice.despacho.model.DetalleDespacho;
+import microservice.despacho.model.ParadaRuta;
+import microservice.despacho.model.SeguimientoDespacho;
 import microservice.despacho.repository.DespachoRepository;
 
 @Service
@@ -60,6 +64,16 @@ public class DespachoService {
 		vincularRelaciones(despacho);
 		validarFechas(despacho);
 		return despachoRepository.save(despacho);
+	}
+
+	public List<Despacho> cargarDatosDemo() {
+		List<Despacho> despachosExistentes = despachoRepository.findAll();
+		if (!despachosExistentes.isEmpty()) {
+			return despachosExistentes;
+		}
+		return List.of(
+				crear(crearDespachoDemo(1001L, 2001L, 3001L, "Av. Providencia 1234", ESTADO_PENDIENTE)),
+				crear(crearDespachoDemo(1002L, 2002L, 3002L, "Gran Avenida 5678", ESTADO_RUTA_ASIGNADA)));
 	}
 
 	public Despacho actualizar(Long id, Despacho datosDespacho) {
@@ -156,5 +170,45 @@ public class DespachoService {
 		if (despacho.getSeguimientos() != null) {
 			despacho.getSeguimientos().forEach(seguimiento -> seguimiento.setDespacho(despacho));
 		}
+	}
+
+	private Despacho crearDespachoDemo(
+			Long idPedido,
+			Long idCliente,
+			Long idSucursal,
+			String direccionEntrega,
+			String estado) {
+		Despacho despacho = new Despacho();
+		despacho.setIdPedido(idPedido);
+		despacho.setIdCliente(idCliente);
+		despacho.setIdSucursal(idSucursal);
+		despacho.setDireccionEntrega(direccionEntrega);
+		despacho.setFechaDespacho(LocalDateTime.now());
+		despacho.setFechaEstimadaEntrega(LocalDateTime.now().plusDays(2));
+		despacho.setEstado(estado);
+		despacho.setDetalles(new ArrayList<>());
+		despacho.setParadas(new ArrayList<>());
+		despacho.setSeguimientos(new ArrayList<>());
+
+		DetalleDespacho detalle = new DetalleDespacho();
+		detalle.setIdProducto(501L);
+		detalle.setCantidad(2);
+		detalle.setEstado("AGREGADO");
+		despacho.agregarDetalle(detalle);
+
+		ParadaRuta parada = new ParadaRuta();
+		parada.setDireccion(direccionEntrega);
+		parada.setOrdenParada(1);
+		parada.setHoraEstimada(LocalDateTime.now().plusDays(1));
+		parada.setEstado("REGISTRADA");
+		despacho.agregarParada(parada);
+
+		SeguimientoDespacho seguimiento = new SeguimientoDespacho();
+		seguimiento.setFechaRegistro(LocalDateTime.now());
+		seguimiento.setUbicacion("Centro de distribucion");
+		seguimiento.setEstado(estado);
+		seguimiento.setObservacion("Dato demo cargado desde despacho");
+		despacho.agregarSeguimiento(seguimiento);
+		return despacho;
 	}
 }

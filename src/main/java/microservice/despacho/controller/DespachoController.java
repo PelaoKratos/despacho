@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import microservice.despacho.dto.DatosRelacionadosDespacho;
 import microservice.despacho.model.Despacho;
+import microservice.despacho.service.DespachoIntegracionService;
 import microservice.despacho.service.DespachoService;
 
 @RestController
@@ -23,9 +25,11 @@ import microservice.despacho.service.DespachoService;
 public class DespachoController {
 
 	private final DespachoService despachoService;
+	private final DespachoIntegracionService despachoIntegracionService;
 
-	public DespachoController(DespachoService despachoService) {
+	public DespachoController(DespachoService despachoService, DespachoIntegracionService despachoIntegracionService) {
 		this.despachoService = despachoService;
+		this.despachoIntegracionService = despachoIntegracionService;
 	}
 
 	@GetMapping
@@ -36,6 +40,11 @@ public class DespachoController {
 	@GetMapping("/{id}")
 	public Despacho obtenerPorId(@PathVariable Long id) {
 		return despachoService.obtenerPorId(id);
+	}
+
+	@GetMapping("/{id}/datos-relacionados")
+	public DatosRelacionadosDespacho obtenerDatosRelacionados(@PathVariable Long id) {
+		return despachoIntegracionService.obtenerDatosRelacionados(id);
 	}
 
 	@GetMapping("/pedido/{idPedido}")
@@ -61,6 +70,11 @@ public class DespachoController {
 	@PostMapping
 	public Despacho crear(@Valid @RequestBody Despacho despacho) {
 		return despachoService.crear(despacho);
+	}
+
+	@PostMapping("/datos-demo")
+	public List<Despacho> cargarDatosDemo() {
+		return despachoService.cargarDatosDemo();
 	}
 
 	@PutMapping("/{id}")

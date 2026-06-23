@@ -278,6 +278,34 @@ class DespachoServiceTest {
 		assertThat(despachoService.crear(despacho)).isEqualTo(despacho);
 	}
 
+	@Test
+	void cargarDatosDemoRetornaExistentesCuandoYaHayDespachos() {
+		List<Despacho> existentes = List.of(crearDespacho(1L));
+		when(despachoRepository.findAll()).thenReturn(existentes);
+
+		assertThat(despachoService.cargarDatosDemo()).isEqualTo(existentes);
+	}
+
+	@Test
+	void cargarDatosDemoInsertaDespachosConRelacionesCuandoNoHayDatos() {
+		when(despachoRepository.findAll()).thenReturn(List.of());
+		when(despachoRepository.save(any(Despacho.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+		List<Despacho> resultado = despachoService.cargarDatosDemo();
+
+		assertThat(resultado).hasSize(2);
+		assertThat(resultado).extracting(Despacho::getIdPedido).containsExactly(1001L, 1002L);
+		assertThat(resultado).extracting(Despacho::getIdCliente).containsExactly(2001L, 2002L);
+		assertThat(resultado).extracting(Despacho::getIdSucursal).containsExactly(3001L, 3002L);
+		assertThat(resultado).extracting(Despacho::getEstado).containsExactly("PENDIENTE", "RUTA_ASIGNADA");
+		assertThat(resultado.get(0).getDetalles()).hasSize(1);
+		assertThat(resultado.get(0).getParadas()).hasSize(1);
+		assertThat(resultado.get(0).getSeguimientos()).hasSize(1);
+		assertThat(resultado.get(0).getDetalles().get(0).getDespacho()).isSameAs(resultado.get(0));
+		assertThat(resultado.get(0).getParadas().get(0).getDespacho()).isSameAs(resultado.get(0));
+		assertThat(resultado.get(0).getSeguimientos().get(0).getDespacho()).isSameAs(resultado.get(0));
+	}
+
 	private Despacho crearDespacho(Long id) {
 		return new Despacho(
 				id,
