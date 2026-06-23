@@ -27,6 +27,9 @@ public class ParadaRuta {
 	@Column(name = "id_ruta", insertable = false, updatable = false)
 	private Long idRuta;
 
+	@Column(name = "id_transportista", insertable = false, updatable = false)
+	private Long idTransportista;
+
 	@Column(name = "id_despacho", insertable = false, updatable = false)
 	private Long idDespacho;
 
@@ -53,6 +56,10 @@ public class ParadaRuta {
 	@JoinColumn(name = "id_ruta")
 	private RutaEntrega ruta;
 
+	@ManyToOne
+	@JoinColumn(name = "id_transportista")
+	private Transportista transportista;
+
 	public void registrarParada() {
 		estado = "REGISTRADA";
 	}
@@ -74,5 +81,12 @@ public class ParadaRuta {
 	public void setRuta(RutaEntrega ruta) {
 		this.ruta = ruta;
 		this.idRuta = ruta != null ? ruta.getIdRuta() : null;
+		this.transportista = ruta != null ? ruta.getTransportista() : null;
+		this.idTransportista = ruta != null ? ruta.getIdTransportista() : null;
+	}
+
+	public void setTransportista(Transportista transportista) {
+		this.transportista = transportista;
+		this.idTransportista = transportista != null ? transportista.getIdTransportista() : null;
 	}
 }

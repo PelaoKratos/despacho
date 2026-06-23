@@ -110,12 +110,21 @@ class ModelTest {
 		assertThat(parada.getRuta()).isSameAs(ruta);
 		assertThat(parada.getIdDespacho()).isEqualTo(1L);
 		assertThat(parada.getIdRuta()).isEqualTo(5L);
+		assertThat(parada.getIdTransportista()).isEqualTo(9L);
+
+		Transportista transportista = transportistaCompleto();
+		parada.setTransportista(transportista);
+
+		assertThat(parada.getTransportista()).isSameAs(transportista);
+		assertThat(parada.getIdTransportista()).isEqualTo(9L);
 
 		parada.setDespacho(null);
 		parada.setRuta(null);
+		parada.setTransportista(null);
 
 		assertThat(parada.getIdDespacho()).isNull();
 		assertThat(parada.getIdRuta()).isNull();
+		assertThat(parada.getIdTransportista()).isNull();
 	}
 
 	@Test
@@ -216,8 +225,8 @@ class ModelTest {
 		DetalleDespacho detalle = new DetalleDespacho(2L, 1L, 30L, 4, "AGREGADO", despacho);
 		Transportista transportista = transportistaCompleto();
 		RutaEntrega ruta = rutaCompleta();
-		ParadaRuta parada = new ParadaRuta(6L, 5L, 1L, "Los Aromos 123", 1,
-				LocalDateTime.of(2026, 6, 22, 12, 0), null, "REGISTRADA", despacho, ruta);
+		ParadaRuta parada = new ParadaRuta(6L, 5L, 9L, 1L, "Los Aromos 123", 1,
+				LocalDateTime.of(2026, 6, 22, 12, 0), null, "REGISTRADA", despacho, ruta, transportista);
 		SeguimientoDespacho seguimiento = new SeguimientoDespacho(7L, 1L,
 				LocalDateTime.of(2026, 6, 22, 13, 0), "Sucursal norte", "EN_TRANSITO",
 				"Sin novedades", despacho);
@@ -227,6 +236,7 @@ class ModelTest {
 		assertThat(transportista.getIdTransportista()).isEqualTo(9L);
 		assertThat(ruta.getIdRuta()).isEqualTo(5L);
 		assertThat(parada.getIdParada()).isEqualTo(6L);
+		assertThat(parada.getIdTransportista()).isEqualTo(9L);
 		assertThat(seguimiento.getIdSeguimiento()).isEqualTo(7L);
 	}
 
